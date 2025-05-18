@@ -17,6 +17,8 @@ from cvise.passes.indent import IndentPass
 from cvise.passes.ints import IntsPass
 from cvise.passes.line_markers import LineMarkersPass
 from cvise.passes.lines import LinesPass
+from cvise.passes.mir_functions import MirFunctionsPass
+from cvise.passes.mir_terminators import MirTerminatorsPass
 from cvise.passes.peep import PeepPass
 from cvise.passes.special import SpecialPass
 from cvise.passes.ternary import TernaryPass
@@ -51,6 +53,8 @@ class CVise:
         'ints': IntsPass,
         'line_markers': LineMarkersPass,
         'lines': LinesPass,
+        'mir-terminators': MirTerminatorsPass,
+        'mir-functions': MirFunctionsPass,
         'peep': PeepPass,
         'special': SpecialPass,
         'ternary': TernaryPass,
@@ -119,7 +123,7 @@ class CVise:
                 try:
                     pass_class = cls.pass_name_mapping[pass_dict['pass']]
                 except KeyError:
-                    raise CViseError('Unkown pass {}'.format(pass_dict['pass'])) from None
+                    raise CViseError('Unknown pass {}'.format(pass_dict['pass'])) from None
 
                 pass_instance = pass_class(pass_dict.get('arg'), external_programs)
                 pass_instance.max_transforms = None

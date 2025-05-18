@@ -20,6 +20,9 @@ class SpecialPass(AbstractPass):
         def replace_empty(m):
             return ''
 
+        def replace_mir_call_with_goto(m):
+            return r"Goto({})".format(m.group(1))
+
         if self.arg == 'a':
             config['search'] = r'transparent_crc\s*\((?P<list>[^)]*)\)'
             config['replace_fn'] = replace_printf
@@ -28,6 +31,18 @@ class SpecialPass(AbstractPass):
             config['replace_fn'] = replace_empty
         elif self.arg == 'c':
             config['search'] = r"extern 'C\+\+'"
+            config['replace_fn'] = replace_empty
+        elif self.arg == 'mir_calls':
+            config['search'] = r'Call\(.*?ReturnTo\((\w+)\)\s*,\s*UnwindUnreachable\(\)\s*\)'
+            config['replace_fn'] = replace_mir_call_with_goto
+        elif self.arg == 'unpub':
+            config['search'] = r'pub '
+            config['replace_fn'] = replace_empty
+        elif self.arg == 'mir_fn':
+            config['search'] = r'fn .*?(?=(?:fn ))'
+            config['replace_fn'] = replace_empty
+        elif self.arg == 'mir_bb':
+            config['search'] = r'bb\d+ = {.*?}'
             config['replace_fn'] = replace_empty
         else:
             raise UnknownArgumentError(self.__class__.__name__, self.arg)
