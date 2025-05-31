@@ -1,4 +1,5 @@
 {"first": [
+    {"pass": "unpub" },
     {"pass": "mir-terminators", "arg": "Return" },
     {"pass": "mir-terminators", "arg": "Goto" },
     {"pass": "mir-functions" }

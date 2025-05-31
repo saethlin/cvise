@@ -6,11 +6,6 @@ import re
 
 from cvise.passes.abstract import AbstractPass, BinaryState, PassResult
 
-regex = re.compile(r'Call\(.*?ReturnTo\((\w+)\)\s*,\s*UnwindUnreachable\(\)\s*\)')
-def call_to_goto(line):
-    m = regex.search(line)
-    return r"Goto({})".format(m.group(1))
-
 class MirFunctionsPass(AbstractPass):
     def check_prerequisites(self):
         return True
@@ -18,7 +13,7 @@ class MirFunctionsPass(AbstractPass):
     def __count_instances(self, test_case):
         with open(test_case) as in_file:
             lines = in_file.readlines()
-        return sum(1 for c in lines if "Call(" in c)
+        return sum('fn ' in line for line in lines)
 
     def new(self, test_case, check_sanity=None):
         instances = self.__count_instances(test_case)
@@ -34,14 +29,16 @@ class MirFunctionsPass(AbstractPass):
         with open(test_case) as in_file:
             data = in_file.readlines()
 
+        first_line_to_remove = 0
         nth = 0
         for l,line in enumerate(data):
-            if "Call(" in line:
+            data[l] = line.strip()
+            if data[l].startswith("fn "):
                 if state.index == nth:
-                    if self.arg == "Return":
-                        data[l] = "Return()"
-                    else:
-                        data[l] = call_to_goto(line)
+                    start = l
+                    end = l
+                    while !data[end].startswith("fn "):
+                        end += 1
                     break
                 nth += 1
 
